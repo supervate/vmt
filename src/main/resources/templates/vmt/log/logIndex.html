@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="../common/css/element-ui-2.13.0.css" th:href="@{/vmt/common/css/element-ui-2.13.0.css}">
+		<title>Vmt logs</title>
+	</head>
+	<body>
+		<div id="app">
+			<log-table :table_data="table_data"></log-table>
+		</div>
+	</body>
+	<script th:inline="javascript">
+		var ctx = [[@{/}]];
+	</script>
+	<script src="../common/js/base64.min.js" th:src="@{/vmt/common/js/base64.min.js}"></script>
+	<script src="../common/js/vue.js" th:src="@{/vmt/common/js/vue.js}"></script>
+	<script src="../common/js/axios.min.js" th:src="@{/vmt/common/js/axios.min.js}"></script>
+	<script src="../common/js/element-ui-2.13.0.js" th:src="@{/vmt/common/js/element-ui-2.13.0.js}"></script>
+	<script src="./js/logService.js" th:src="@{/vmt/log/js/logService.js}"></script>
+	<script src="./js/logTable.js" th:src="@{/vmt/log/js/logTable.js}"></script>
+	<script>
+		const vm = new Vue({
+			el: '#app',
+			data: {
+				table_data: []
+			},
+			created: () => {
+				listAllFiles()
+			}
+		});
+	</script>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--日志输出的目录 如果是springboot jar包部署 请手动指定该目录，绝对路径-->
+	<springProperty scope="context" name="logPath" source="vmt.log.dir" defaultValue="~/softcache/vmt/default/logs"/>
+    <property name="log.path" value="${logPath}" />
+    <!-- 彩色日志 -->
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+    <!--输出格式：时间 输出级别 线程名 - [简单类名.调用方法名()] - 日志信息 -->
+	<property name="log.pattern.color" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%5level){blue} %clr([%thread]){green} %clr([%class{0}.%method\\(\\)]){cyan} - %msg%n" />
+	<property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5level [%thread] [%class{0}.%method\\(\\)] - %msg%n" />
+
+	<!-- 控制台输出 -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${log.pattern.color}</pattern>
+		</encoder>
+	</appender>
+	<!-- 系统日志输出 -->
+	<appender name="file_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <file>${log.path}/sys-details.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 按天回滚 daily -->
+			<fileNamePattern>${log.path}/sys-details.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- 日志最大的历史 60天 -->
+			<maxHistory>60</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${log.pattern}</pattern>
+		</encoder>
+	</appender>
+
+	<!--系统操作日志-->
+    <root level="info">
+        <appender-ref ref="file_info" />
+        <appender-ref ref="console" />
+    </root>
+</configuration>

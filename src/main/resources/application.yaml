@@ -1,0 +1,6 @@
+vmt:
+  log:
+    dir: ~/softcache/vmt/logs
+server:
+  servlet:
+    context-path: /vt
