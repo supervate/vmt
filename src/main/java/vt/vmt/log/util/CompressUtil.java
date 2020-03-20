@@ -1,11 +1,10 @@
 package vt.vmt.log.util;
 
+import cn.hutool.core.io.IoUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,7 +71,10 @@ public class CompressUtil {
     public static OutputStream customizeResponse(HttpServletResponse response, String fileName,
                                                  String fileType)
             throws IOException {
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName+"."+fileType, "UTF-8"));
+        if ("zip".equals(fileType)){
+            response.setContentType("application/x-zip-compressed");
+        }
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName + "." + fileType, "UTF-8"));
         return response.getOutputStream();
     }
 
@@ -96,4 +98,5 @@ public class CompressUtil {
             out.write(data, countIndex * bufferLength, bufferLength);
         }
     }
+
 }

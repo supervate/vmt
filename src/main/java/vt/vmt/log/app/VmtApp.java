@@ -1,4 +1,4 @@
-package vt.vmt;
+package vt.vmt.log.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

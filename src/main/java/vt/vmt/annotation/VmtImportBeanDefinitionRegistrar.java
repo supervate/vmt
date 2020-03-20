@@ -21,9 +21,16 @@ public class VmtImportBeanDefinitionRegistrar implements ImportBeanDefinitionReg
         registerAllImport(Objects.requireNonNull(importingClassMetadata.getAnnotationAttributes(EnableVmt.class.getName())), registry);
     }
 
+    /**
+     * determine what need be load according config.
+     * @param annotationAttributes
+     * @param registry
+     * @return
+     */
     private String[] registerAllImport(Map<String, Object> annotationAttributes, BeanDefinitionRegistry registry){
         List<String> imports = new ArrayList<>();
         VmtClassPathBeanDefinitionScanner scanner = new VmtClassPathBeanDefinitionScanner(registry,true);
+        // it will load the log module's classes when call doScan.
         if ((boolean) annotationAttributes.get("openLogs")) {
             scanner.doScan(ROOT_PACKAGE_LOG);
         }

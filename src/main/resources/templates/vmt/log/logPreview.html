@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../common/css/element-ui-2.13.0.css"
+          th:href="@{/vmt/common/css/element-ui-2.13.0.css}">
+    <title>Vmt logs</title>
+</head>
+<body>
+<div id="app">
+    <el-backtop>UP</el-backtop>
+    <log-preview :log-contents="logContents" :log-name="logName"></log-preview>
+</div>
+</body>
+<script th:inline="javascript">
+    var ctx = [[@{/}]];
+    var logName = [[${logName}]];
+</script>
+<script src="../common/js/base64.min.js" th:src="@{/vmt/common/js/base64.min.js}"></script>
+<script src="../common/js/vue.js" th:src="@{/vmt/common/js/vue.js}"></script>
+<script src="../common/js/axios.min.js" th:src="@{/vmt/common/js/axios.min.js}"></script>
+<script src="../common/js/element-ui-2.13.0.js" th:src="@{/vmt/common/js/element-ui-2.13.0.js}"></script>
+<script src="../common/js/wangEditor.min.js" th:src="@{/vmt/common/js/wangEditor.min.js}"></script>
+<script src="./js/logTable.js" th:src="@{/vmt/log/js/logTable.js}"></script>
+<script src="./js/logPreview.js" th:src="@{/vmt/log/js/logPreview.js}"></script>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            logName: logName,
+            logContents: [''],
+            startLine: -1,
+            requestInterval: 500,
+            requestFlag: true,
+            interval: null
+        },
+        methods: {
+            readLogContent() {
+                if (this.requestFlag) {
+                    this.requestFlag = false;
+                    axios.get(ctx + 'vmt/log/preview/' + Base64.encode(this.logName) + '?startLine=' + this.startLine)
+                        .then(response => {
+                            let startLineTemp = response.headers["start-line"];
+                            if (startLineTemp == this.startLine) {
+                                if (this.requestInterval == 500) {
+                                    this.requestInterval = 5000;
+                                    clearInterval(this.interval);
+                                    this.interval = setInterval(this.readLogContent, this.requestInterval);
+                                }
+                            } else {
+                                this.startLine = startLineTemp;
+                                this.logContents.push(response.data);
+                                if (this.requestInterval == 5000) {
+                                    this.requestInterval = 500;
+                                    clearInterval(this.interval);
+                                    this.interval = setInterval(this.readLogContent, this.requestInterval);
+                                }
+                            }
+                            this.requestFlag = true;
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            this.requestFlag = true;
+                        });
+                }
+            },
+        },
+        created: function () {
+            this.interval = setInterval(this.readLogContent, this.requestInterval);
+        }
+    });
+</script>
+</html>

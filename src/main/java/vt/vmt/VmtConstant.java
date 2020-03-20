@@ -2,7 +2,6 @@ package vt.vmt;
 
 /**
  * @author vate
- * @date 2020/2/23 20:56
  */
 public class VmtConstant {
     /**
@@ -19,4 +18,18 @@ public class VmtConstant {
     public static final String SUFFIX_BACKSLASH = "\\";
 
     public static final String ROOT_PACKAGE_LOG = "vt.vmt.log";
+
+    public static final int BYTE_SIZE_MB = 1024 * 1024;
+
+    public static final int BYTE_SIZE_KB = 1024;
+
+    /**
+     * the default line number when access log file at first in preview page
+     */
+    public static final int LOG_PREVIEW_DEFAULT_START_LINE = -1;
+    /**
+     * the max gettable log lines of per access in preview page
+     */
+    public static final int LOG_PREVIEW_DEFAULT_MAX_LINE = 10;
+
 }

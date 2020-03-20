@@ -1,6 +1,5 @@
 package vt.vmt.log.config;
 
-import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.Console;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import static vt.vmt.VmtConstant.*;
 /**
  * @author vate
- * @date 2020/2/23 20:32
  */
 @ConfigurationProperties(prefix = "vmt.log")
 @Configuration
@@ -21,6 +19,12 @@ public class VmtLogConfiguration {
     @Getter
     @Setter
     private String dir;
+    /**
+     * the max line number of per log preview request.
+     */
+    @Getter
+    @Setter
+    private Integer previewSize;
 
     public void setDir(String dir) {
         // the dir path must be end with '/'
@@ -28,6 +32,13 @@ public class VmtLogConfiguration {
             dir += SUFFIX_SLASH;
         }
         this.dir = dir;
+    }
+
+    public void setPreviewSize(Integer previewSize) {
+        if (previewSize <= 0 ){
+            previewSize = LOG_PREVIEW_DEFAULT_MAX_LINE;
+        }
+        this.previewSize = previewSize;
     }
 
     public static void main(String[] args) {

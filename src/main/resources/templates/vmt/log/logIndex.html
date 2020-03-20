@@ -8,7 +8,28 @@
 	</head>
 	<body>
 		<div id="app">
-			<log-table :table_data="table_data"></log-table>
+			<log-table :table-data="pageTableData" :height="height">
+				<el-input
+						placeholder="type log name..."
+						prefix-icon="el-icon-search"
+						v-model="searchStr"
+						size="small"
+						autosize
+						style="width: 50%">
+				</el-input>
+			</log-table>
+			<div class="block" style="text-align: left">
+<!--				<span class="demonstration">完整功能</span>-->
+				<el-pagination
+						@size-change="handleSizeChange"
+						@current-change="handleCurrentChange"
+						:current-page="currentPage"
+						:page-sizes="pageSizes"
+						:page-size="pageSize"
+						layout="total, sizes, prev, pager, next, jumper"
+						:total="showTableData.length">
+				</el-pagination>
+			</div>
 		</div>
 	</body>
 	<script th:inline="javascript">
@@ -24,11 +45,57 @@
 		const vm = new Vue({
 			el: '#app',
 			data: {
-				table_data: []
+				tableData:[],
+				showTableData: [],
+				height: document.documentElement.clientHeight * 0.85,
+				currentPage: 1,
+				pageSize: 10,
+				pageSizes: [1,10,20,50,100,150,200,500,1000],
+				searchStr: ''
 			},
-			created: () => {
-				listAllFiles()
-			}
+			methods:{
+				listAllFiles() {
+					axios.get(ctx + "vmt/log/list")
+							.then(response => {
+								console.log(this);
+								this.tableData = response.data;
+								this.showTableData = this.tableData;
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
+				},
+				handleSizeChange(pageSize){
+					// 改变每页显示的条数
+					this.pageSize=pageSize;
+					// 注意：在改变每页显示的条数时，要将页码显示到第一页
+					this.currentPage=1;
+				},
+				handleCurrentChange(currentPage){
+					// 改变默认的页数
+					this.currentPage=currentPage;
+				}
+			},
+			computed:{
+				pageTableData: function () {
+					let start = (this.currentPage - 1) * this.pageSize;
+					let end = start + this.pageSize;
+					return this.showTableData.slice(start,end);
+				}
+			},
+			watch:{
+				searchStr: function (newSearchStr, oldSearchStr) {
+					if (newSearchStr !== ''){
+						this.showTableData = this.tableData.filter(logInfo => logInfo.fileName.indexOf(newSearchStr) !== -1);
+					}else {
+						this.showTableData = this.tableData;
+					}
+				}
+			},
+			created: function () {
+				// this = this;
+				this.listAllFiles();
+			},
 		});
 	</script>
 </html>

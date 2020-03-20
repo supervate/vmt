@@ -144,3 +144,7 @@ buildNumber.properties
 .mvn/*
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
+src/main/resources/rebel-remote.xml
+src/main/resources/rebel.xml
+src/main/resources/static/vmt/common/html/
+src/main/resources/static/vmt/log/css/

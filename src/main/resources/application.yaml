@@ -1,6 +1,10 @@
 vmt:
   log:
     dir: ~/softcache/vmt/logs
+    preview-size: 100
 server:
   servlet:
     context-path: /vt
+  compression:
+    enabled: true
+    mime-types: text/html

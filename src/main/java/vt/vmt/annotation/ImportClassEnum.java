@@ -13,7 +13,6 @@ import static vt.vmt.VmtConstant.*;
 
 /**
  * @author vate
- * @date 2020/2/23 22:53
  */
 public enum ImportClassEnum {
     /**
