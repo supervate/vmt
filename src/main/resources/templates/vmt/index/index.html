@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../common/css/element-ui-2.13.0.css"
+          th:href="@{/vmt/common/css/element-ui-2.13.0.css}">
+    <title>Vmt</title>
+</head>
+<body>
+<div id="app">
+	<el-tabs v-model="activeName" @tab-click="handleTabClick" style="padding-left: 10px">
+            <el-tab-pane v-for="module of modules" :label="module.name" :name="module.name" :uri="module.indexUri"></el-tab-pane>
+    </el-tabs>
+    <el-card class="box-card">
+        <div v-html="contentHtml">
+        </div>
+    </el-card>
+</div>
+</body>
+<script th:inline="javascript">
+    var ctx = [[@{/}]];
+    const modules = [[${modules}]];
+</script>
+<script src="../common/js/base64.min.js" th:src="@{/vmt/common/js/base64.min.js}"></script>
+<script src="../common/js/vue.js" th:src="@{/vmt/common/js/vue.js}"></script>
+<script src="../common/js/axios.min.js" th:src="@{/vmt/common/js/axios.min.js}"></script>
+<script src="../common/js/element-ui-2.13.0.js" th:src="@{/vmt/common/js/element-ui-2.13.0.js}"></script>
+<script src="./js/logService.js" th:src="@{/vmt/log/js/logService.js}"></script>
+<script src="./js/logTable.js" th:src="@{/vmt/log/js/logTable.js}"></script>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            modules: modules,
+            activeName: '',
+			contentHtml: '',
+            height: document.documentElement.clientHeight * 0.85
+        },
+        methods: {
+            handleTabClick: function (tab) {
+				var contentUri = ctx + tab.$attrs.uri;
+				this.contentHtml =
+						'<iframe id="content" style="width: 100%; height: ' + this.height + 'px;" frameborder="no" border="0" marginwidth="0" marginheight="0"' +
+						'src="' + contentUri +
+						'"></iframe>';
+            }
+        },
+        created: function () {
+            // this = this;
+			var contentUri = ctx + this.modules[0].indexUri;
+			this.contentHtml =
+					'<iframe id="content" style="width: 100%; height: ' + this.height + 'px;" frameborder="no" border="0" marginwidth="0" marginheight="0"' +
+					'src="' + contentUri +
+					'"></iframe>';
+            this.activeName = modules[0].name;
+        }
+    });
+</script>
+</html>

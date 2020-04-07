@@ -19,7 +19,6 @@
 				</el-input>
 			</log-table>
 			<div class="block" style="text-align: left">
-<!--				<span class="demonstration">完整功能</span>-->
 				<el-pagination
 						@size-change="handleSizeChange"
 						@current-change="handleCurrentChange"
@@ -57,7 +56,6 @@
 				listAllFiles() {
 					axios.get(ctx + "vmt/log/list")
 							.then(response => {
-								console.log(this);
 								this.tableData = response.data;
 								this.showTableData = this.tableData;
 							})

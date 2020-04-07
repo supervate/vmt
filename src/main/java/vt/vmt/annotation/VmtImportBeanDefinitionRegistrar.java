@@ -33,7 +33,12 @@ public class VmtImportBeanDefinitionRegistrar implements ImportBeanDefinitionReg
         // it will load the log module's classes when call doScan.
         if ((boolean) annotationAttributes.get("openLogs")) {
             scanner.doScan(ROOT_PACKAGE_LOG);
+
         }
+        if ((boolean) annotationAttributes.get("openStatus")) {
+            scanner.doScan(ROOT_PACKAGE_STATUS);
+        }
+        scanner.doScan(ROOT_PACKAGE_INDEX);
         return imports.toArray(new String[0]);
     }
 }

@@ -24,7 +24,6 @@ Vue.component('log-table', {
 </el-button-group>
 <el-table
         ref="logTable"
-        border
         :data="tableData"
         :max-height="height"
         @selection-change="handleSelectionChange"

@@ -43,7 +43,6 @@ public class LogUtil {
             int start = startLine,end;
             // read the recently data of previewSize
             if (logLineTotal <= 0){
-//                responseText("There hasn't content now.",response);
                 return;
             }
             if (start >= logLineTotal){

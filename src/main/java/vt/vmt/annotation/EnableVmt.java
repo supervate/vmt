@@ -17,4 +17,5 @@ import java.lang.annotation.*;
 @Import(VmtImportBeanDefinitionRegistrar.class)
 public @interface EnableVmt {
     boolean openLogs() default false;
+    boolean openStatus() default false;
 }

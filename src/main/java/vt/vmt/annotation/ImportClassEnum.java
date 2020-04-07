@@ -1,15 +1,11 @@
 package vt.vmt.annotation;
 
-import org.springframework.context.annotation.ImportSelector;
 import vt.vmt.log.config.VmtLogConfiguration;
-import vt.vmt.log.web.LogController;
+import vt.vmt.log.web.LogIndexController;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static vt.vmt.VmtConstant.*;
 
 /**
  * @author vate
@@ -20,7 +16,7 @@ public enum ImportClassEnum {
      */
     LOG(Arrays.asList(
             VmtLogConfiguration.class.getName(),
-            LogController.class.getName()
+            LogIndexController.class.getName()
     )),
     /**
      * thread components

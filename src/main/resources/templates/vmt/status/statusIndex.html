@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/css/element-ui-2.13.0.css"
+          th:href="@{/vmt/common/css/element-ui-2.13.0.css}">
+    <title>Vmt Status</title>
+</head>
+<body>
+<div id="app">
+    <el-container>
+        <el-header></el-header>
+        <el-container>
+            <el-aside width="200px" style="padding: 20px;">
+                <el-card class="box-card" v-for="disk in diskInfos">
+                    <div slot="header" class="clearfix">
+						<span>{{'Disk: ' + disk.name}}</span>
+						<i style="float: right" class="el-icon-folder"></i>
+					</div>
+                    <div class="text item">
+                        <div :key="" class="text item">
+                            {{'Total: ' + Math.ceil(disk.total/1024/1024/1024) + ' G'}}
+                        </div>
+                        <el-divider></el-divider>
+                        <div :key="" class="text item">
+                            {{'Free: ' + Math.ceil(disk.free/1024/1024/1024) + ' G'}}
+                        </div>
+                    </div>
+                </el-card>
+            </el-aside>
+            <el-main>
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-card class="box-card">
+                            <div slot="header" class="clearfix">
+                                <span>System</span>
+								<i style="float: right" class="el-icon-cpu"></i>
+							</div>
+                            <div class="text item">
+                                {{'OS: ' + sysStaticInfo.osName}}
+                            </div>
+                            <el-divider></el-divider>
+                            <div class="text item">
+                                {{'OS Arch: ' + sysStaticInfo.osArch}}
+                            </div>
+                            <el-divider></el-divider>
+                            <div class="text item">
+                                {{'File Separator: ' + sysStaticInfo.fileSeparator}}
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-card class="box-card">
+                            <div slot="header" class="clearfix">
+                                <span>Memory</span>
+								<i style="float: right" class="el-icon-stopwatch"></i>
+							</div>
+                            <div :key="" class="text item">
+                                {{'MemSize: ' + memInfo.memSize + ' M'}}
+                            </div>
+                            <el-divider></el-divider>
+                            <div :key="" class="text item">
+                                {{'MemUsed All: ' + memInfo.memUsedByAll + ' M'}}
+                            </div>
+                            <el-divider></el-divider>
+                            <div :key="" class="text item">
+                                {{'MemUsed App: ' + memInfo.memUsedByApp + ' M'}}
+                            </div>
+                        </el-card>
+                    </el-col>
+                </el-row>
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+</body>
+<script th:inline="javascript">
+    const ctx = [[@{/}]];
+</script>
+<script src="../common/js/base64.min.js" th:src="@{/vmt/common/js/base64.min.js}"></script>
+<script src="../common/js/vue.js" th:src="@{/vmt/common/js/vue.js}"></script>
+<script src="../common/js/axios.min.js" th:src="@{/vmt/common/js/axios.min.js}"></script>
+<script src="../common/js/element-ui-2.13.0.js" th:src="@{/vmt/common/js/element-ui-2.13.0.js}"></script>
+<script src="../common/js/vt-util.js" th:src="@{/vmt/common/js/vt-util.js}"></script>
+<script src="./js/logService.js" th:src="@{/vmt/log/js/logService.js}"></script>
+<script src="./js/logTable.js" th:src="@{/vmt/log/js/logTable.js}"></script>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            socket: null,
+            sysStaticInfo: {},
+            memInfo: {},
+            diskInfos: []
+        },
+        methods: {
+            openSocket() {
+                const self = this;
+                if (typeof (WebSocket) == 'undefined') {
+                    console.log('Sorry,Your browser do not support WebSocket');
+                } else {
+                    if (this.socket != null) {
+                        this.socket.close();
+                        this.socket = null;
+                    }
+                    this.socket = new WebSocket('ws://' + location.host + ctx + 'vmt/status/ws/' + uuid(32, 32));
+                    //open event
+                    this.socket.onopen = function () {
+                        console.log('websocket opened');
+                    };
+                    //receive message
+                    this.socket.onmessage = function (msg) {
+                        // console.log(msg.data);
+                        const data = JSON.parse(msg.data);
+                        const body = data.body;
+                        self.sysStaticInfo = body.sysStaticInfo;
+                        self.memInfo['memSize'] = Math.ceil(body.memSize / 1024 / 1024);
+                        self.memInfo['memUsedByAll'] = Math.ceil(body.memUsedByAll / 1024 / 1024);
+                        self.memInfo['memUsedByApp'] = Math.ceil(body.memUsedByApp / 1024 / 1024);
+                        self.diskInfos = body.diskInfos;
+                    };
+                    //close event
+                    this.socket.onclose = function () {
+                        console.log('websocket closed');
+                    };
+                    //error event
+                    this.socket.onerror = function () {
+                        console.log('websocket found error...');
+                    }
+                }
+            },
+        },
+        computed: {},
+        watch: {},
+        created: function () {
+            // this = this;
+            this.openSocket();
+        },
+    });
+</script>
+</html>

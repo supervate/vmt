@@ -7,7 +7,7 @@ public class VmtConstant {
     /**
      * the prefix of all api path
      */
-    public static final String API_PREFIX_PATH = "/vmt";
+    public static final String URI_PREFIX_VMT = "vmt";
     /**
      * the file separate '/'
      */
@@ -18,6 +18,14 @@ public class VmtConstant {
     public static final String SUFFIX_BACKSLASH = "\\";
 
     public static final String ROOT_PACKAGE_LOG = "vt.vmt.log";
+
+    public static final String ROOT_PACKAGE_STATUS = "vt.vmt.status";
+
+    public static final String ROOT_PACKAGE_INDEX = "vt.vmt.index";
+
+    public static final String MODULE_NAME_LOG = "log";
+
+    public static final String MODULE_NAME_STATUS = "status";
 
     public static final int BYTE_SIZE_MB = 1024 * 1024;
 
