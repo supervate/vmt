@@ -39,7 +39,10 @@ public class SysInfo {
      * all disk info
      */
     List<DiskInfo> diskInfos;
-
+    /**
+     * current timeStamp
+     */
+    String timeStamp;
     //...and other,waits to add
 
 }

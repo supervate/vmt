@@ -1,5 +1,6 @@
 package vt.vmt.status.service;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.system.SystemUtil;
 import com.sun.management.OperatingSystemMXBean;
@@ -11,6 +12,8 @@ import vt.vmt.status.entity.SysStaticInfo;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +44,7 @@ public class SysInfoService {
         builder.memUsedByAll(usedMem);
         builder.memUsedByApp(SystemUtil.getTotalMemory());
 
+        builder.timeStamp(String.valueOf(DateUtil.now()));
         // 磁盘使用情况
         List<DiskInfo> diskInfos = new ArrayList<>();
         File[] files = File.listRoots();

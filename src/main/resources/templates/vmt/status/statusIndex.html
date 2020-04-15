@@ -9,14 +9,13 @@
 <body>
 <div id="app">
     <el-container>
-        <el-header></el-header>
         <el-container>
             <el-aside width="200px" style="padding: 20px;">
                 <el-card class="box-card" v-for="disk in diskInfos">
                     <div slot="header" class="clearfix">
-						<span>{{'Disk: ' + disk.name}}</span>
-						<i style="float: right" class="el-icon-folder"></i>
-					</div>
+                        <span>{{'Disk: ' + disk.name}}</span>
+                        <i style="float: right" class="el-icon-folder"></i>
+                    </div>
                     <div class="text item">
                         <div :key="" class="text item">
                             {{'Total: ' + Math.ceil(disk.total/1024/1024/1024) + ' G'}}
@@ -34,8 +33,8 @@
                         <el-card class="box-card">
                             <div slot="header" class="clearfix">
                                 <span>System</span>
-								<i style="float: right" class="el-icon-cpu"></i>
-							</div>
+                                <i style="float: right" class="el-icon-cpu"></i>
+                            </div>
                             <div class="text item">
                                 {{'OS: ' + sysStaticInfo.osName}}
                             </div>
@@ -53,8 +52,8 @@
                         <el-card class="box-card">
                             <div slot="header" class="clearfix">
                                 <span>Memory</span>
-								<i style="float: right" class="el-icon-stopwatch"></i>
-							</div>
+                                <i style="float: right" class="el-icon-stopwatch"></i>
+                            </div>
                             <div :key="" class="text item">
                                 {{'MemSize: ' + memInfo.memSize + ' M'}}
                             </div>
@@ -69,6 +68,18 @@
                         </el-card>
                     </el-col>
                 </el-row>
+                <el-row :gutter="20" style="padding-top: 20px">
+                    <el-col :span="24">
+                        <el-card class="box-card">
+                            <div slot="header" class="clearfix">
+                                <span>MemoryUsed ByApp</span>
+                                <i style="float: right" class="el-icon-stopwatch"></i>
+                            </div>
+                            <div id="app-memory-graph" style="width: 100%;height: 300px;">
+                            </div>
+                        </el-card>
+                    </el-col>
+                </el-row>
             </el-main>
         </el-container>
     </el-container>
@@ -77,13 +88,12 @@
 <script th:inline="javascript">
     const ctx = [[@{/}]];
 </script>
+<script src="../common/js/echarts.min.js" th:src="@{/vmt/common/js/echarts.min.js}"></script>
 <script src="../common/js/base64.min.js" th:src="@{/vmt/common/js/base64.min.js}"></script>
-<script src="../common/js/vue.js" th:src="@{/vmt/common/js/vue.js}"></script>
+<script src="../common/js/vue.min.js" th:src="@{/vmt/common/js/vue.min.js}"></script>
 <script src="../common/js/axios.min.js" th:src="@{/vmt/common/js/axios.min.js}"></script>
 <script src="../common/js/element-ui-2.13.0.js" th:src="@{/vmt/common/js/element-ui-2.13.0.js}"></script>
 <script src="../common/js/vt-util.js" th:src="@{/vmt/common/js/vt-util.js}"></script>
-<script src="./js/logService.js" th:src="@{/vmt/log/js/logService.js}"></script>
-<script src="./js/logTable.js" th:src="@{/vmt/log/js/logTable.js}"></script>
 <script>
     const vm = new Vue({
         el: '#app',
@@ -91,7 +101,11 @@
             socket: null,
             sysStaticInfo: {},
             memInfo: {},
-            diskInfos: []
+            diskInfos: [],
+            // this variable record all the value of memSize used by app
+            memUsedByAppArr: [],
+            memUsedByAppTimeArr: [],
+            memChart: null
         },
         methods: {
             openSocket() {
@@ -117,6 +131,11 @@
                         self.memInfo['memSize'] = Math.ceil(body.memSize / 1024 / 1024);
                         self.memInfo['memUsedByAll'] = Math.ceil(body.memUsedByAll / 1024 / 1024);
                         self.memInfo['memUsedByApp'] = Math.ceil(body.memUsedByApp / 1024 / 1024);
+                        self.memInfo['timeStamp'] = body.timeStamp;
+                        self.memUsedByAppArr.push(self.memInfo['memUsedByApp']);
+                        // the complete string is 'yyyy-MM-dd hh-mm-ss'
+                        self.memUsedByAppTimeArr.push(self.memInfo['timeStamp'].substring(11,19));
+                        self.renderGraph(self);
                         self.diskInfos = body.diskInfos;
                     };
                     //close event
@@ -129,13 +148,40 @@
                     }
                 }
             },
+            renderGraph(self) {
+                const timeLength = self.memUsedByAppTimeArr.length;
+                const memLength = self.memUsedByAppArr.length;
+                if (timeLength > 20){
+                    self.memUsedByAppTimeArr = self.memUsedByAppTimeArr.slice(timeLength - 20,timeLength);
+                    self.memUsedByAppArr = self.memUsedByAppArr.slice(memLength - 20,memLength);
+                }
+                var option = {
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: self.memUsedByAppTimeArr
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [{
+                        data: self.memUsedByAppArr,
+                        type: 'line',
+                        areaStyle: {}
+                    }]
+                };
+                // 使用刚指定的配置项和数据显示图表。
+                self.memChart.setOption(option);
+            }
         },
         computed: {},
         watch: {},
         created: function () {
-            // this = this;
             this.openSocket();
         },
+        mounted: function () {
+            this.memChart = echarts.init(document.getElementById('app-memory-graph'))
+        }
     });
 </script>
 </html>
