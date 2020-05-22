@@ -11,7 +11,7 @@
 
     <groupId>io.github.suopovate</groupId>
     <artifactId>vmt-spring-boot-starter</artifactId>
-    <version>1.1.0-RELEASE</version>
+    <version>1.3.0-RELEASE</version>
 
     <name>vmt-spring-boot-starter</name>
     <description>An visualization monitor kit of springBoot application.</description>
@@ -92,16 +92,23 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>rebel.xml</exclude>
-                    <exclude>rebel-remote.xml</exclude>
-                </excludes>
-            </resource>
-        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!--排除掉一些不应该打包的文件-->
+                    <excludes>
+                        <!--对于目录的排除，必须同时配合排除目录内的文件才能生效.-->
+                        <exclude>**/app**</exclude>
+                        <exclude>**/app/*</exclude>
+                        <exclude>rebel*.*</exclude>
+                        <exclude>application*.*</exclude>
+                        <exclude>logback-spring.*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
