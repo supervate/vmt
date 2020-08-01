@@ -47,7 +47,7 @@
 
 ### 2. 注解启用 Vmt
 
-```
+```java
 // openLogs 即开启日志监控 openStatus 即开启状态监控
 @EnableVmt(openLogs = true,openStatus = true)
 @SpringBootApplication
@@ -64,7 +64,7 @@ public class XxxxApplication {
 
 添加以下配置到文件中
 
-```
+```yaml
 vmt:
   log:
     # 在线日志监控页面配置：代表每次请求从文件中拉取的日志内容(行数) 
