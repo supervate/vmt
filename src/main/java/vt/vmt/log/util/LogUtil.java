@@ -59,7 +59,7 @@ public class LogUtil {
             while ((currentLine = lineNumberReader2.readLine()) != null){
                 if (++currentLineNumber >= start){
                     if (currentLineNumber <= end){
-                        writer.println(currentLine + "<br/>");
+                        writer.println(currentLine);
                     }else {
                         break;
                     }
